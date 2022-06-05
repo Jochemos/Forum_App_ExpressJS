@@ -1,5 +1,4 @@
-import { readFile } from 'fs/promises';
-import * as fs from 'fs';
+import { readFile, writeFile } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import NewQuestion from '../dto/newQuestion.model';
 import NewAnswer from '../dto/newAnswer.model';
@@ -25,7 +24,7 @@ const makeQuestionRepository = fileName => {
 
     };
 
-    const addQuestion = async (question: NewQuestion[]): Promise<any> => {
+    const addQuestion = async (question: NewQuestion[]) => {
         const fileContent = await readFile(fileName, { encoding: 'utf-8' });
         const questions = JSON.parse(fileContent);
 
@@ -35,9 +34,7 @@ const makeQuestionRepository = fileName => {
 
         const newData = JSON.stringify(questions);
 
-        fs.writeFile(fileName, newData, err => {
-            if(err) throw err;
-        });
+        writeFile(fileName, newData);
 
         return { 'message': 'New question added' };
 
@@ -86,9 +83,7 @@ const makeQuestionRepository = fileName => {
 
         const newData = JSON.stringify(questions);
 
-        fs.writeFile(fileName, newData, err => {
-            if(err) throw err;
-        });
+        writeFile(fileName, newData);
 
         return findComment;
     };
