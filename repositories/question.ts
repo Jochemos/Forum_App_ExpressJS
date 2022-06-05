@@ -39,7 +39,7 @@ const makeQuestionRepository = fileName => {
             if(err) throw err;
         });
 
-        return { 'message': 'New comment added' };
+        return { 'message': 'New question added' };
 
     };
 
