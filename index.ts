@@ -18,20 +18,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(makeRepositories(process.env.STORAGE_FILE_PATH));
 
-app.get('/', (_, res) => {
+const globalPrefix = '/api/v1';
+
+app.get(globalPrefix + '/', (_, res) => {
 
     res.status(200).json({ message: 'Welcome to responder!' });
 
 });
 
-app.get('/questions', async (req: Request, res: Response) => {
+app.get(globalPrefix + '/questions', async (req: Request, res: Response) => {
 
     const questions = await req.repositories.questionRepo.getQuestions();
     res.status(200).json(questions);
 
 });
 
-app.get('/questions/:questionId', async (req: Request, res: Response) => {
+app.get(globalPrefix + '/questions/:questionId', async (req: Request, res: Response) => {
 
     const questionById = await req.repositories.questionRepo.getQuestionById(req.params.questionId);
 
@@ -43,14 +45,14 @@ app.get('/questions/:questionId', async (req: Request, res: Response) => {
 
 });
 
-app.post('/questions', async (req: Request, res: Response) => {
+app.post(globalPrefix + '/questions', async (req: Request, res: Response) => {
 
     const addQuestion = await req.repositories.questionRepo.addQuestion(req.body);
     res.status(201).json(addQuestion);
 
 });
 
-app.get('/questions/:questionId/answers', async (req: Request, res: Response) => {
+app.get(globalPrefix + '/questions/:questionId/answers', async (req: Request, res: Response) => {
 
     const questionById = await req.repositories.questionRepo.getAnswers(req.params.questionId);
 
@@ -62,14 +64,14 @@ app.get('/questions/:questionId/answers', async (req: Request, res: Response) =>
 
 });
 
-app.post('/questions/:questionId/answers', async (req: Request, res: Response) => {
+app.post(globalPrefix + '/questions/:questionId/answers', async (req: Request, res: Response) => {
 
     const addAnswer = await req.repositories.questionRepo.addAnswer(req.params.questionId, req.body);
     res.status(201).json(addAnswer);
 
 });
 
-app.get('/questions/:questionId/answers/:answerId', async (req: Request, res: Response) => {
+app.get(globalPrefix + '/questions/:questionId/answers/:answerId', async (req: Request, res: Response) => {
 
     const getAnswer = await req.repositories.questionRepo.getAnswer(req.params.questionId, req.params.answerId);
 
