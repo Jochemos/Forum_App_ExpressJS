@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../index';
+import app from './index';
 
 describe('POST request test', () => {
 
@@ -12,5 +12,5 @@ describe('POST request test', () => {
             });
         expect(res.statusCode).toEqual(201);
     });
-    
+
 });

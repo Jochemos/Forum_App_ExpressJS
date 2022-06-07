@@ -3,9 +3,17 @@ import { faker } from '@faker-js/faker';
 import { makeQuestionRepository } from './question';
 
 describe('question repository', () => {
+
+    type CorrectJSON = {
+      id,
+      summary,
+      author,
+      answers: { 'id', 'summary', 'author' }[]
+    }[]
+
     const TEST_QUESTIONS_FILE_PATH = 'test-questions.json';
     let questionRepo;
-    const testQuestions:[] = [
+    const testQuestions: CorrectJSON = [
         {
             id: '50f9e662-fa0e-4ec7-b53b-7845e8f821c3',
             summary: 'Nobody like me...',

@@ -3,58 +3,82 @@ import { v4 as uuidv4 } from 'uuid';
 import NewQuestion from '../dto/newQuestion.model';
 import NewAnswer from '../dto/newAnswer.model';
 
-const makeQuestionRepository = fileName => {
-    const getQuestions = async () => {
-        const fileContent = await readFile(fileName, { encoding: 'utf-8' });
-        const questions = JSON.parse(fileContent);
+const getQuestionsFile = async (fileName) => {
 
-        return questions;
+    const fileContent = await readFile(fileName, { encoding: 'utf-8' });
+
+    const questions = await JSON.parse(fileContent);
+
+    return questions;
+
+};
+
+const getNewData = async (fileName, data) => {
+
+    const newData = await JSON.stringify(data);
+
+    await writeFile(fileName, newData);
+
+};
+
+const detectFinalResult = (ifFindResult) => {
+
+    if(!ifFindResult){
+        return null;
+    }else{
+        return ifFindResult;
+    }
+
+};
+
+const makeQuestionRepository = fileName => {
+
+    const getQuestions = async () => {
+
+        return await getQuestionsFile(fileName);
+
     };
 
     const getQuestionById = async (questionId: string) => {
-        const fileContent = await readFile(fileName, { encoding: 'utf-8' });
-        const questions = JSON.parse(fileContent);
+
+        const questions = await getQuestionsFile(fileName);
+
         const findQuestion = questions.find(user => user.id === questionId);
 
-        if(!findQuestion){
-            return null;
-        }else{
-            return findQuestion;
-        }
+        return detectFinalResult(findQuestion);
 
     };
 
     const addQuestion = async (question: NewQuestion[]) => {
-        const fileContent = await readFile(fileName, { encoding: 'utf-8' });
-        const questions = JSON.parse(fileContent);
+
+        const questions = await getQuestionsFile(fileName);
 
         const questionWithId = Object.assign({'id': uuidv4()}, question);
+
         const questionAll = Object.assign(questionWithId, {'answers': []});
+        
         questions.push(questionAll);
 
-        const newData = JSON.stringify(questions);
-
-        writeFile(fileName, newData);
+        await getNewData(fileName, questions);
 
         return { 'message': 'New question added' };
 
     };
 
     const getAnswers = async (questionId: string) => {
-        const fileContent = await readFile(fileName, { encoding: 'utf-8' });
-        const questions = JSON.parse(fileContent);
+
+        const questions = await getQuestionsFile(fileName);
+
         const findComment = questions.find(user => user.id === questionId);
 
-        if(!findComment){
-            return null;
-        }else{
-            return findComment.answers;
-        }
+        return findComment.answers;
+
     };
 
     const getAnswer = async (questionId: string, answerId: string) => {
-        const fileContent = await readFile(fileName, { encoding: 'utf-8' });
-        const questions = JSON.parse(fileContent);
+
+        const questions = await getQuestionsFile(fileName);
+
         const findComment = questions.find(user => user.id === questionId);
 
         if(!findComment){
@@ -63,17 +87,13 @@ const makeQuestionRepository = fileName => {
 
         const findAnswers = findComment.answers.find(answer => answer.id === answerId);
 
-        if(!findAnswers){
-            return null;
-        }else{
-            return findAnswers;
-        }
+        return detectFinalResult(findAnswers);
 
     };
 
     const addAnswer = async (questionId: string, answer: NewAnswer[]) => {
-        const fileContent = await readFile(fileName, { encoding: 'utf-8' });
-        const questions = JSON.parse(fileContent);
+
+        const questions = await getQuestionsFile(fileName);
 
         const findComment = questions.find(user => user.id === questionId);
 
@@ -81,11 +101,10 @@ const makeQuestionRepository = fileName => {
 
         findComment.answers.push(answerWithId);
 
-        const newData = JSON.stringify(questions);
+        await getNewData(fileName, questions);
 
-        writeFile(fileName, newData);
+        return findComment.answers;
 
-        return findComment;
     };
 
     return {
