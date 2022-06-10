@@ -101,7 +101,7 @@ describe('question repository', () => {
 
         const result = await questionRepo.addAnswer(paramId, req);
 
-        const answer = await result.answers[1];
+        const answer = result.reverse()[0];
 
         expect(answer).toEqual(expect.objectContaining({
             id: authorId,
